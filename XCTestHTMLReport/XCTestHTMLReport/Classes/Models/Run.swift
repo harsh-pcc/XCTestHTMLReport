@@ -42,7 +42,7 @@ struct Run: HTML
         return allTests.filter { $0.status == .failure }.count
     }
 
-    init(root: String, path: String, indexHTMLRoot: String)
+    init(root: String, path: String, indexHTMLRoot: String, shouldIncludeActivitesAndLogs: Bool)
     {
         let fullpath = root + "/" + path
         Logger.step("Parsing summary")
@@ -76,9 +76,13 @@ struct Run: HTML
         }
 
         let testableSummaries = dict!["TestableSummaries"] as! [[String: Any]]
-        testSummaries = testableSummaries.map { TestSummary(screenshotsPath: screenshotsPath, dict: $0) }
+        testSummaries = testableSummaries.map { TestSummary(screenshotsPath: screenshotsPath, dict: $0, shouldIncludeActivitesAndLogs: shouldIncludeActivitesAndLogs) }
         runDestination.status = status
 
+        guard shouldIncludeActivitesAndLogs else {
+            return
+        }
+        
         Logger.substep("Parsing Activity Logs")
         let parentDirectory = fullpath.dropLastPathComponent()
         Logger.substep("Searching for \(activityLogsFilename) in \(parentDirectory)")

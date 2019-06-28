@@ -14,7 +14,7 @@ struct Summary
 
     var runs = [Run]()
 
-    init(roots: [String])
+    init(roots: [String], shouldIncludeActivitesAndLogs: Bool)
     {
         let indexHTMLRoot = roots[0]
         for root in roots {
@@ -37,7 +37,7 @@ struct Summary
             }
 
             for path in plistPath {
-                let run = Run(root: root, path: path, indexHTMLRoot: indexHTMLRoot)
+                let run = Run(root: root, path: path, indexHTMLRoot: indexHTMLRoot, shouldIncludeActivitesAndLogs: shouldIncludeActivitesAndLogs)
                 runs.append(run)
             }
         }

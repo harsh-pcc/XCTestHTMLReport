@@ -20,26 +20,38 @@ var help = BlockArgument("h", "", required: false, helpMessage: "Print usage and
 var verbose = BlockArgument("v", "", required: false, helpMessage: "Provide additional logs") {
     Logger.verbose = true
 }
+
+var shouldIncludeActivitesAndLogs = false
+var includeActivitiesAndLogs = BlockArgument("i", "includeActivitiesAndLogs", required: false, helpMessage: "Include or exclude activities and logs") {
+    shouldIncludeActivitesAndLogs = true
+}
+
 var junitEnabled = false
 var junit = BlockArgument("j", "junit", required: false, helpMessage: "Provide JUnit XML output") {
     junitEnabled = true
 }
 var result = ValueArgument(.path, "r", "resultBundlePath", required: true, allowsMultiple: true, helpMessage: "Path to a result bundle (allows multiple)")
 
-command.arguments = [help, verbose, junit, result]
+command.arguments = [help, verbose, junit, result, includeActivitiesAndLogs]
 
 if !command.isValid {
     print(command.usage)
     exit(EXIT_FAILURE)
 }
 
-let summary = Summary(roots: result.values)
+let summary = Summary(roots: result.values, shouldIncludeActivitesAndLogs: shouldIncludeActivitesAndLogs)
 
 Logger.step("Building HTML..")
 let html = summary.html
 
 do {
-    let path = "\(result.values.first!)/index.html"
+    var fileName = ""
+    if shouldIncludeActivitesAndLogs {
+        fileName = "index"
+    } else {
+        fileName = "index-short-summary"
+    }
+    let path = "\(result.values.first!)/\(fileName).html"
     Logger.substep("Writing report to \(path)")
 
     try html.write(toFile: path, atomically: false, encoding: .utf8)

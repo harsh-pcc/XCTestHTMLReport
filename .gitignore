@@ -8,7 +8,7 @@ xchtmlreport
 ## Build generated
 builds/
 DerivedData/
-
+result
 ## Various settings
 *.pbxuser
 !default.pbxuser

@@ -45,14 +45,14 @@ struct TestSummary: HTML
         return status
     }
 
-    init(screenshotsPath: String, dict: [String : Any])
+    init(screenshotsPath: String, dict: [String : Any], shouldIncludeActivitesAndLogs: Bool)
     {
         Logger.substep("Parsing TestSummary")
         
         uuid = NSUUID().uuidString
         testName = dict["TestName"] as! String
         let rawTests = dict["Tests"] as! [[String: Any]]
-        tests = rawTests.map { Test(screenshotsPath: screenshotsPath, dict: $0) }
+        tests = rawTests.map { Test(screenshotsPath: screenshotsPath, dict: $0, shouldIncludeActivitesAndLogs: shouldIncludeActivitesAndLogs) }
     }
 
     // PRAGMA MARK: - HTML
